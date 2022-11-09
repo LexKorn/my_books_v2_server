@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
     "client": "npm run start -prefix ../client",
     "server": "nodemon index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
@@ -26,6 +27,7 @@
   "devDependencies": {
     "colors": "^1.4.0",
     "concurrently": "^7.4.0",
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.20"
   }
 }

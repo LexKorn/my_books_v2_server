@@ -26,6 +26,11 @@ class AuthorController {
 
             photo.mv(path.resolve(__dirname, '..', 'static', fileName));
 
+            const candicate = await Author.findOne({where: {userId: id, name}});
+            if (candicate) {
+                return next(ApiError.badRequest('Такой автор уже существует!'));
+            } 
+
             const author = await Author.create({name, description, userId: id, countryId, photo: fileName});            
             return res.json(_transformAuthor(author));
 
