@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const path = require('path');
 
-const {Author} = require('../models/models');
+const {Author, Book, Quote} = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 const _transformAuthor = (author) => {
@@ -64,7 +64,15 @@ class AuthorController {
     async delete(req, res, next) {
         try {
             const {id} = req.params;
+            const books = await Book.findAll({where: {authorId: id}});
+
+            for (let i = 0; i < books.length; i++) {
+                await Quote.destroy({where: {userId: req.user.id, bookId: books[i].id}});
+            }
+            
+            await Book.destroy({where: {userId: req.user.id, authorId: id}});
             await Author.destroy({where: {userId: req.user.id, id}});
+
             return res.json('Author was deleted');
 
         } catch(err) {

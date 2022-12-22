@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const path = require('path');
 
-const {Book} = require('../models/models');
+const {Book, Quote} = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 const _transformBook = (book) => {
@@ -62,6 +62,7 @@ class BookController {
     async delete(req, res, next) {
         try {
             const {id} = req.params;
+            await Quote.destroy({where: {userId: req.user.id, bookId: id}});
             await Book.destroy({where: {userId: req.user.id, id}});
             return res.json('Book was deleted');
 
