@@ -21,15 +21,21 @@ class AuthorController {
         try {
             const {id} = req.user;
             let {name, description, countryId} = req.body;
-            const {photo} = req.files;
-            let fileName = uuid.v4() + ".jpg";
-
-            photo.mv(path.resolve(__dirname, '..', 'static', fileName));
-
+            let fileName;
+            
             const candicate = await Author.findOne({where: {userId: id, name}});
             if (candicate) {
                 return next(ApiError.badRequest('Такой автор уже существует!'));
             } 
+
+            if (req.files === null) {
+                fileName = "838ab1ce-606a-4cd6-8107-7871313b7305.jpg";
+            } else {
+                const {photo} = req.files;
+                fileName = uuid.v4() + ".jpg";
+                photo.mv(path.resolve(__dirname, '..', 'static', fileName));
+            }
+            
 
             const author = await Author.create({name, description, userId: id, countryId, photo: fileName});            
             return res.json(_transformAuthor(author));
@@ -84,10 +90,15 @@ class AuthorController {
         try {
             const {id} = req.params;
             const {name, description, countryId} = req.body;
-            const {photo} = req.files;
-            let fileName = uuid.v4() + ".jpg";
+            let fileName;
 
-            photo.mv(path.resolve(__dirname, '..', 'static', fileName));
+            if (req.files === null) {
+                fileName = "838ab1ce-606a-4cd6-8107-7871313b7305.jpg";
+            } else {
+                const {photo} = req.files;
+                fileName = uuid.v4() + ".jpg";
+                photo.mv(path.resolve(__dirname, '..', 'static', fileName));
+            }
 
             await Author.update({name, description, photo: fileName, countryId}, {where: {userId: req.user.id, id}});
             return res.json('Author was updated');

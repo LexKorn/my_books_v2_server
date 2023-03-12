@@ -24,10 +24,15 @@ class BookController {
         try {
             const {id} = req.user;
             let {name, link, rating, comment, countryId, authorId} = req.body;
-            const {cover} = req.files;
-            let fileName = uuid.v4() + ".jpg";
+            let fileName;
 
-            cover.mv(path.resolve(__dirname, '..', 'static', fileName));
+            if (req.files === null) {
+                fileName = "2fdb8f0e-6538-4225-9db2-931902c0d7d5.jpg";
+            } else {
+                const {cover} = req.files;
+                fileName = uuid.v4() + ".jpg";
+                cover.mv(path.resolve(__dirname, '..', 'static', fileName));
+            }
 
             const book = await Book.create({name, link, rating, comment, userId: id, countryId, authorId, cover: fileName});            
             return res.json(_transformBook(book));
@@ -75,10 +80,15 @@ class BookController {
         try {
             const {id} = req.params;
             const {name, link, rating, comment, countryId, authorId} = req.body;
-            const {cover} = req.files;
-            let fileName = uuid.v4() + ".jpg";
+            let fileName;
 
-            cover.mv(path.resolve(__dirname, '..', 'static', fileName));
+            if (req.files === null) {
+                fileName = "2fdb8f0e-6538-4225-9db2-931902c0d7d5.jpg";
+            } else {
+                const {cover} = req.files;
+                fileName = uuid.v4() + ".jpg";
+                cover.mv(path.resolve(__dirname, '..', 'static', fileName));
+            }
 
             await Book.update({name, link, rating, comment, cover: fileName, countryId, authorId}, {where: {userId: req.user.id, id}});
             return res.json('Book was updated');
